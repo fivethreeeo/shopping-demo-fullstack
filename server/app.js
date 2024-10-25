@@ -10,7 +10,11 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-const mongoURI = process.env.LOCAL_DB_ADDRESS
+const indexRouter = require('./routes/index')
+
+app.use('/api', indexRouter)
+
+const mongoURI = process.env.MONGODB_URI_PROD
 const port = process.env.PORT || 5000
 
 mongoose
