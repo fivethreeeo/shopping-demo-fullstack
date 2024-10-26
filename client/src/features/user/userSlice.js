@@ -9,6 +9,7 @@ export const loginWithEmail = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login', { email, password })
+      sessionStorage.setItem('token', response.data.token)
       return response.data.user
     } catch (error) {
       // 실패시 생긴 에러 값을 저장
@@ -40,7 +41,14 @@ export const registerUser = createAsyncThunk(
 
 export const loginWithToken = createAsyncThunk(
   'user/loginWithToken',
-  async (_, { rejectWithValue }) => {}
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/user/me')
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 )
 
 const userSlice = createSlice({
@@ -82,6 +90,9 @@ const userSlice = createSlice({
       .addCase(loginWithEmail.rejected, (state, action) => {
         state.loading = false
         state.loginError = action.payload
+      })
+      .addCase(loginWithToken.fulfilled, (state, action) => {
+        state.user = action.payload.user
       })
   },
 })
