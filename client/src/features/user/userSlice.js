@@ -23,7 +23,22 @@ export const loginWithGoogle = createAsyncThunk(
   async (token, { rejectWithValue }) => {}
 )
 
-export const logout = () => dispatch => {}
+// export const logout = navigate => dispatch => {
+//   dispatch(showToastMessage({ message: '로그아웃 성공', status: 'success' }))
+//   sessionStorage.removeItem('token')
+//   navigate(0)
+// }
+
+export const logout = createAsyncThunk('user/logout', async (_, { dispatch, rejectWithValue }) => {
+  try {
+    sessionStorage.removeItem('token')
+    dispatch(showToastMessage({ message: '로그아웃 성공', status: 'success' }))
+  } catch (error) {
+    dispatch(showToastMessage({ message: '로그아웃 실패', status: 'error' }))
+    return rejectWithValue(error.message)
+  }
+})
+
 export const registerUser = createAsyncThunk(
   'user/registerUser',
   async ({ email, name, password, navigate }, { dispatch, rejectWithValue }) => {
@@ -94,6 +109,9 @@ const userSlice = createSlice({
       })
       .addCase(loginWithToken.fulfilled, (state, action) => {
         state.user = action.payload.user
+      })
+      .addCase(logout.fulfilled, state => {
+        state.user = null
       })
   },
 })
