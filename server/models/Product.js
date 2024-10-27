@@ -7,6 +7,7 @@ const productSchema = new Schema(
     name: { type: String, required: true },
     image: { type: String, required: true },
     category: { type: Array, required: true },
+    size: { type: Array, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     stock: { type: Object, required: true },
@@ -26,5 +27,5 @@ productSchema.methods.toJSON = function () {
   return obj
 }
 
-const Product = mongoose.model('User', productSchema)
+const Product = mongoose.model('Product', productSchema)
 module.exports = Product
