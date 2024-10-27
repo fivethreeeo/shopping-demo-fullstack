@@ -46,6 +46,7 @@ export const loginWithToken = createAsyncThunk(
       const response = await api.get('/user/me')
       return response.data
     } catch (error) {
+      sessionStorage.removeItem('token')
       return rejectWithValue(error.message)
     }
   }
