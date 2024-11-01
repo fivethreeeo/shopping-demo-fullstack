@@ -11,12 +11,13 @@ import {
   deleteProduct,
   setSelectedProduct,
 } from '../../features/product/productSlice'
+import { ColorRing } from 'react-loader-spinner'
 
 const AdminProductPage = () => {
   const navigate = useNavigate()
   const [query] = useSearchParams()
   const dispatch = useDispatch()
-  const { productList, totalPageNum } = useSelector(state => state.product)
+  const { productList, totalPageNum, loading } = useSelector(state => state.product)
   const [showDialog, setShowDialog] = useState(false)
   const [searchQuery, setSearchQuery] = useState({
     page: query.get('page') || 1,
@@ -62,6 +63,26 @@ const AdminProductPage = () => {
   const handlePageClick = ({ selected }) => {
     //  쿼리에 페이지값 바꿔주기
     setSearchQuery({ ...searchQuery, page: selected + 1 })
+  }
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <ColorRing
+          visible={true}
+          height='80'
+          width='80'
+          ariaLabel='blocks-loading'
+          wrapperStyle={{}}
+          wrapperClass='blocks-wrapper'
+          colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+        />
+      </div>
+    )
   }
 
   return (
