@@ -5,6 +5,7 @@ import CloudinaryUploadWidget from '../../../utils/CloudinaryUploadWidget'
 import { CATEGORY, STATUS, SIZE } from '../../../constants/product.constants'
 import '../style/adminProduct.style.css'
 import { clearError, createProduct, editProduct } from '../../../features/product/productSlice'
+import { useSearchParams } from 'react-router-dom'
 
 const InitialFormData = {
   name: '',
@@ -17,8 +18,13 @@ const InitialFormData = {
   price: 0,
 }
 
-const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
+const NewItemDialog = ({ mode, showDialog, setShowDialog, setSearchQuery }) => {
   const { error, success, selectedProduct } = useSelector(state => state.product)
+  const [query] = useSearchParams()
+  const currentQuery = {
+    page: query.get('page') || 1,
+    name: query.get('name') || '',
+  }
   const [formData, setFormData] = useState(
     mode === 'new' ? { ...InitialFormData } : selectedProduct
   )
@@ -53,6 +59,8 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const handleClose = () => {
     //모든걸 초기화시키고;
     // 다이얼로그 닫아주기
+    setFormData({ ...InitialFormData })
+    setShowDialog(false)
   }
 
   const handleSubmit = event => {
@@ -61,6 +69,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     if (stock.length === 0) {
       return setStockError(true)
     }
+    setStockError(false)
     // 재고를 배열에서 객체로 바꿔주기
     const totalStock = stock.reduce((total, item) => {
       return { ...total, [item[0]]: parseInt(item[1]) }
@@ -68,10 +77,11 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     // [['M',2]] 에서 {M:2}로
     if (mode === 'new') {
       //새 상품 만들기
-      console.log({ ...formData, stock: totalStock })
       dispatch(createProduct({ ...formData, stock: totalStock }))
+      setSearchQuery({ ...currentQuery, page: 1 })
     } else {
       // 상품 수정하기
+      dispatch(editProduct({ ...formData, stock: totalStock, id: selectedProduct._id }))
     }
   }
 

@@ -23,7 +23,7 @@ const AdminProductPage = () => {
     page: query.get('page') || 1,
     name: query.get('name') || '',
   }) //검색 조건들을 저장하는 객체
-  console.log(searchQuery)
+
   const [mode, setMode] = useState('new')
 
   const tableHeader = ['#', 'Sku', 'Name', 'Price', 'Stock', 'Image', 'Status', '']
@@ -31,7 +31,7 @@ const AdminProductPage = () => {
   //상품리스트 가져오기 (url쿼리 맞춰서)
   useEffect(() => {
     dispatch(getProductList({ ...searchQuery }))
-  }, [showDialog, query])
+  }, [query])
 
   useEffect(() => {
     //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
@@ -40,7 +40,6 @@ const AdminProductPage = () => {
     }
     const params = new URLSearchParams(searchQuery)
     const query = params.toString()
-    console.log(query)
     navigate('?' + query)
   }, [searchQuery])
 
@@ -51,6 +50,9 @@ const AdminProductPage = () => {
   const openEditForm = product => {
     //edit모드로 설정하고
     // 아이템 수정다이얼로그 열어주기
+    setMode('edit')
+    dispatch(setSelectedProduct(product))
+    setShowDialog(true)
   }
 
   const handleClickNewItem = () => {
@@ -129,7 +131,12 @@ const AdminProductPage = () => {
         />
       </Container>
 
-      <NewItemDialog mode={mode} showDialog={showDialog} setShowDialog={setShowDialog} />
+      <NewItemDialog
+        mode={mode}
+        showDialog={showDialog}
+        setShowDialog={setShowDialog}
+        setSearchQuery={setSearchQuery}
+      />
     </div>
   )
 }
