@@ -32,11 +32,11 @@ productController.createProduct = async (req, res) => {
 productController.getProducts = async (req, res) => {
   try {
     const { page, name } = req.query
-    let query = Product.find(condition).sort({ updatedAt: -1 })
     let response = { status: 'success' }
     const condition = name
       ? { name: { $regex: name, $options: 'i', isDeleted: false } }
       : { isDeleted: false }
+    let query = Product.find(condition).sort({ updatedAt: -1 })
     if (page) {
       const prevPage = page - 1
       query.skip(prevPage * PAGE_SIZE).limit(PAGE_SIZE)
@@ -68,6 +68,17 @@ productController.updateProduct = async (req, res) => {
     res.status(200).json({ status: 'success', product })
   } catch (error) {
     res.status(400).json({ status: 'fail', message: error.message })
+  }
+}
+
+productController.deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.id
+    const product = await Product.findByIdAndUpdate({ _id: productId }, { isDeleted: true })
+    if (!product) throw new Error('No item found')
+    res.status(200).json({ status: 'success' })
+  } catch (error) {
+    return res.status(400).json({ status: 'fail', error: error.message })
   }
 }
 
