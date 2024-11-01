@@ -8,7 +8,6 @@ export const getProductList = createAsyncThunk(
   async (query, { rejectWithValue }) => {
     try {
       const response = await api.get('/product', { params: { ...query } })
-      console.log(response)
       if (response.status !== 200) {
         throw new Error(response.error)
       }
@@ -43,7 +42,18 @@ export const createProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   'products/deleteProduct',
-  async (id, { dispatch, rejectWithValue }) => {}
+  async (id, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.delete(`/product/${id}`)
+      if (response.status !== 200) {
+        throw new Error(response.error)
+      }
+      dispatch(showToastMessage({ message: '상품 삭제 완료', status: 'success' }))
+      dispatch(getProductList({ page: 1 }))
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 )
 
 export const editProduct = createAsyncThunk(
