@@ -46,6 +46,7 @@ const AdminProductPage = () => {
   const deleteItem = id => {
     //아이템 삭제하기
     dispatch(deleteProduct(id))
+    handlePageClick({ selected: 0 })
   }
 
   const openEditForm = product => {
@@ -136,7 +137,7 @@ const AdminProductPage = () => {
         mode={mode}
         showDialog={showDialog}
         setShowDialog={setShowDialog}
-        setSearchQuery={setSearchQuery}
+        handlePageClick={handlePageClick}
       />
     </div>
   )
